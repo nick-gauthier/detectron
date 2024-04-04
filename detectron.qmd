@@ -5,37 +5,34 @@ editor: visual
 ---
 
 ```{r}
-
-```
-
-```{r}
-reticulate::use_virtualenv('r-detectron')
-library(detectron)
-
-install_detectron()
-```
-
-```{r}
 library(here)
-annotations <- here('instances_default.json')
-images <- here('img')
-
-detectron_train(annotations, images, max_iter = 500L, num_classes=2L)
+library(detectron)
 ```
 
-```{python}
-import detectron2
-```
-
-You can add options to executable code like this
+Install the necessary python packages.
 
 ```{r}
-source_python('detectron_module/detectron_finetune.py')
-load_and_filter_dataset()
-finetune_model()
+#install_detectron()
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+Define paths to images and annotations.
+
+```{r}
+annotations <- here('../shell_annotations.json')
+images <- here('../shell_img')
+
+
+```
+
+Train a mask-rcnn model.
+
+```{r}
+detectron_train(annotations, images, dataset_name = 'shell_train', max_iter = 1000L, num_classes=2L)
+```
+
+```{r}
+f
+```
 
 ```{r}
 reticulate::source_python('inst/detectron_predict.py')
@@ -45,7 +42,6 @@ test_img <- 'img/NPP-047 2.7 mm.jpeg'
 test_pred <- predict_image(test_img)
 
 visualize_output(test_img, test_pred)
-
 ```
 
 ```{python}
@@ -57,8 +53,8 @@ from sahi.utils.cv import read_image
 
 detection_model = AutoDetectionModel.from_pretrained(
     model_type='detectron2',
-    model_path='Detectron2_Models/model_final.pth',
-    config_path='Detectron2_Models/config.yaml',
+    model_path='../Detectron2_Models/model_final.pth',
+    config_path='../Detectron2_Models/config.yaml',
     confidence_threshold=0.80,
    # image_size=640,
     device="cpu", # or 'cuda:0'
